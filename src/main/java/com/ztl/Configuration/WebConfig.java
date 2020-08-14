@@ -11,7 +11,7 @@ import org.springframework.web.servlet.view.InternalResourceViewResolver;
 
 @EnableWebMvc
 @Configuration
-@ComponentScan(basePackages = "com.ztl")
+@ComponentScan(basePackages = "com.ztl.SampleLogin")
 public class WebConfig extends WebMvcConfigurerAdapter {
 
 	@Bean

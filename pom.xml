@@ -1,17 +1,23 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
-	
-	<groupId>com.ztl</groupId>
-	<artifactId>spring-selenium-test</artifactId>
+	<groupId>com.ztl.SampleLogin</groupId>
+	<artifactId>ZTL-spring-selenium-test</artifactId>
 	<version>1.0.0</version>
-	<name>Spring-Selenium-Test</name>
+	<name>ZTL-Spring-Selenium-Test</name>
 	<packaging>war</packaging>
 
 	<properties>
-		<java-version>1.6</java-version>
-		<spring.version>3.1.2.RELEASE</spring.version>
+		<java-version>1.8</java-version>
+		<spring.version>5.2.6.RELEASE</spring.version>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<selenium.version>3.141.59</selenium.version>
+		<junit.version>4.12</junit.version>
+		<jetty.version>9.4.30.v20200611</jetty.version>
+		<javac.version>1.7</javac.version>
+		<browser.type>firefox</browser.type>
+		<on.grid>false</on.grid>
+		<head.less>true</head.less>
 	</properties>
 
 	<dependencies>
@@ -35,12 +41,11 @@
 			<groupId>javax.servlet</groupId>
 			<artifactId>servlet-api</artifactId>
 			<version>2.5</version>
-			<scope>provided</scope>
 		</dependency>
 		<dependency>
 			<groupId>cglib</groupId>
 			<artifactId>cglib-nodep</artifactId>
-			<version>2.2</version>
+			<version>3.3.0</version>
 		</dependency>
 		<dependency>
 			<groupId>javax.servlet</groupId>
@@ -50,92 +55,131 @@
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
-            <version>4.11</version>
-            <scope>test</scope>
+            <version>${junit.version}</version>
             <type>jar</type>
-        </dependency>
+		</dependency>
         <dependency>
             <groupId>org.seleniumhq.selenium</groupId>
-            <artifactId>selenium-firefox-driver</artifactId>
-            <version>2.28.0</version>
-            <scope>test</scope>
-        </dependency>            
+            <artifactId>selenium-java</artifactId>
+            <version>${selenium.version}</version>
+		</dependency>
+		<dependency>
+            <groupId>org.seleniumhq.selenium</groupId>
+            <artifactId>selenium-server</artifactId>
+            <version>${selenium.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>io.github.bonigarcia</groupId>
+			<artifactId>webdrivermanager</artifactId>
+			<version>4.1.0</version>
+		</dependency>
+		<dependency> 
+			<groupId>mysql</groupId> 
+			<artifactId>mysql-connector-java</artifactId> 
+			<version>5.1.30</version> 
+		</dependency>
+		<dependency>
+			<groupId>org.eclipse.jetty</groupId>
+			<artifactId>jetty-server</artifactId>
+			<version>${jetty.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.eclipse.jetty</groupId>
+			<artifactId>jetty-security</artifactId>
+			<version>${jetty.version}</version>
+		</dependency>
+		<dependency>
+		  <groupId>org.eclipse.jetty</groupId>
+		  <artifactId>apache-jstl</artifactId>
+		  <version>${jetty.version}</version>
+		  <type>pom</type>
+		</dependency>
 	</dependencies>
 
 	<build>
 		<plugins>
 			<plugin>
 				<artifactId>maven-compiler-plugin</artifactId>
-				<version>2.5.1</version>
+				<version>3.8.1</version>
 				<configuration>
 					<source>${java-version}</source>
 					<target>${java-version}</target>
-				 <encoding>${project.build.sourceEncoding}</encoding>
-				</configuration>
-			</plugin>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-dependency-plugin</artifactId>
-				<executions>
-					<execution>
-						<id>install</id>
-						<phase>install</phase>
-						<goals>
-							<goal>sources</goal>
-						</goals>
-					</execution>
-				</executions>
-			</plugin>
-			<plugin>
-				<groupId>org.codehaus.mojo</groupId>
-				<artifactId>tomcat-maven-plugin</artifactId>
-				<version>1.1</version>
-				<configuration>
-					<port>8383</port>
+					<encoding>${project.build.sourceEncoding}</encoding>
+					<systemPropertyVariables>
+						<property>
+							<name>grid</name>
+							<value>${on.grid}</value>
+						</property>
+						<property>
+							<name>headless</name>
+							<value>${head.less}</value>
+						</property>
+						<property>
+							<name>browsertype</name>
+							<value>${browser.type}</value>
+						</property>
+						<property>
+							<name>grid.server.url</name>
+							<value>${grid.server.url}</value>
+						</property>
+						<property>
+							<name>app.server.url</name>
+							<value>${app.server.url}</value>
+						</property>
+					</systemPropertyVariables> 
 				</configuration>
 			</plugin>
             <plugin>
                 <groupId>org.codehaus.cargo</groupId>
                 <artifactId>cargo-maven2-plugin</artifactId>
-                <version>1.2.0</version>
-                <configuration>
-                    <type>standalone</type>
+				<version>1.7.16</version>
+				  <executions>
+					<execution>
+						<id>start-container</id>
+						<phase>pre-integration-test</phase>
+						<goals>
+							<goal>start</goal>
+						</goals>
+					</execution>
+						<execution>
+						<id>stop-container</id>
+						<phase>post-integration-test</phase>
+						<goals>
+							<goal>stop</goal>
+						</goals>
+						</execution>
+				</executions>
+				<configuration>
+					<container>
+					  <containerId>jetty9x</containerId>
+					  <type>embedded</type>
+					</container>
                     <configuration>
                         <properties>
-                            <cargo.servlet.port>10001</cargo.servlet.port>
-                        </properties>
+							<cargo.servlet.port>10001</cargo.servlet.port>
+							<cargo.logging>high</cargo.logging>
+						</properties>
                     </configuration>
-                </configuration>                
-                <executions>
-                    <execution>
-                        <id>start</id>
-                        <phase>pre-integration-test</phase>
-                        <goals>
-                            <goal>start</goal>
-                        </goals>
-                        </execution>
-                    <execution>
-                        <id>stop</id>
-                        <phase>post-integration-test</phase>
-                        <goals>
-                            <goal>stop</goal>
-                        </goals>
-                    </execution>
-                </executions>
+                </configuration>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-failsafe-plugin</artifactId>
-                <version>2.12</version>
-                <executions>
-                    <execution>
-                        <id>default</id>
-                        <goals>
-                            <goal>integration-test</goal>
-                            <goal>verify</goal>
-                        </goals>
-                    </execution>
-                </executions>
+				<version>3.0.0-M5</version>
+				<executions>
+					<execution>
+						<id>default</id>
+						<goals>
+							<goal>integration-test</goal>
+							<goal>verify</goal>
+						</goals>
+						<configuration>
+						  <includes>
+							<include>**/*Test*.java</include>
+						  </includes>
+						</configuration>
+					  </execution>
+				</executions>
             </plugin>
 		</plugins>
 	</build>
