@@ -1,7 +1,9 @@
 
 package com.ztl.Test;
 
+import java.util.concurrent.*;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.assertFalse;
 
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -12,6 +14,8 @@ import org.junit.Before;
 import org.junit.Test;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.support.ui.ExpectedConditions;
+import org.openqa.selenium.support.ui.WebDriverWait;
 import org.openqa.selenium.firefox.FirefoxDriver;
 import org.openqa.selenium.firefox.FirefoxOptions;
 import org.openqa.selenium.chrome.ChromeDriver;
@@ -34,39 +38,43 @@ public class SeleniumTestLogin {
 		System.out.println(bHeadless);
 		Boolean bGrid = Boolean.getBoolean("grid");
 		System.out.println(bGrid);
-		DesiredCapabilities capability = null;
+		
+		String inappserverUrl = System.getProperty("app.server.url");
+		String appServerUrl = "http://www.google.com";
+		if (inappserverUrl != null) {
+			appServerUrl = inappserverUrl;
+		}
 
 		if (bGrid) {
+			// DesiredCapabilities capability = null;
+
 			System.out.println("On Grid...");
 			String serverUrl = System.getProperty("grid.server.url");
 			String gridServerUrl = "http://seleniumhub:4444/wd/hub";
 			if (serverUrl != null) {
 				gridServerUrl = serverUrl;
 			}
+			URL gridUrl = new URL(gridServerUrl);
 
 			if ("firefox".equals(sBrowser)){
 				System.out.println("firefox...");
-				// DesiredCapabilities capability = DesiredCapabilities.firefox();
-				FirefoxOptions options = new FirefoxOptions();
-				options.setHeadless(bHeadless);
-				capability.merge(options);
+				// driver = new RemoteWebDriver(gridUrl, DesiredCapabilities.firefox());
+				DesiredCapabilities capability = DesiredCapabilities.firefox();
+				driver = new RemoteWebDriver(gridUrl,capability);
+				// capability.setBrowserName(“firefox” );
+				// capability.setPlatform(“WINDOWS”);
+				// capability.setVersion(“4”);
+				driver.manage().window().maximize();
+				driver.manage().timeouts().implicitlyWait(1, TimeUnit.MINUTES);
 			}
 			else
 			{
 				System.out.println("chrome...");
-				// DesiredCapabilities capability = DesiredCapabilities.chrome();
-				ChromeOptions options = new ChromeOptions();
-				options.setHeadless(bHeadless);
-				options.setExperimentalOption("excludeSwitches", Collections.singletonList("enable-automation"));
-				capability.merge(options);
+				driver = new RemoteWebDriver(gridUrl, DesiredCapabilities.chrome());
 			}
-
-			URL gridUrl = new URL(gridServerUrl);
-			driver = new RemoteWebDriver(gridUrl, capability);
 		  } 
 		  else {
 			System.out.println("Local driver...");
-			// System.setProperty("webdriver.gecko.driver", "../resources/geckodriver");
 			if ("firefox".equals(sBrowser)){
 				System.out.println("firefox...");
 				WebDriverManager.firefoxdriver().setup();
@@ -77,14 +85,8 @@ public class SeleniumTestLogin {
 				WebDriverManager.chromedriver().setup();
 				driver = new ChromeDriver();
 			}
+			driver.get(appServerUrl);
 		  }
-
-		String inappserverUrl = System.getProperty("app.server.url");
-		String appServerUrl = "http://www.google.com";
-		if (inappserverUrl != null) {
-			appServerUrl = inappserverUrl;
-		}
-		driver.get(appServerUrl);
 	}
 
 	@After
@@ -94,30 +96,40 @@ public class SeleniumTestLogin {
 
 	@Test
 	public void pageTitleIsNotNull() throws MalformedURLException {
-		WebElement element = driver.findElement(By.name("q"));
-		element.sendKeys("Cheese!");
-		element.submit();
 		assertTrue(driver.getTitle() != null);
 	}
 
 	@Test
 	public void pageTitleContainsGoogle() throws MalformedURLException {
-		WebElement element = driver.findElement(By.name("q"));
-		element.sendKeys("Cheese!");
-		element.submit();
-		assertTrue(driver.getTitle().contains("Google"));
+		// WebElement element = driver.findElement(By.name("q"));
+		// element.sendKeys("Cheese!");
+		// element.submit();
+		assertFalse(driver.getTitle().contains("Google"));
 	}
 
 	@Test
 	public void pageTitleContainsAppName() throws MalformedURLException {
+		WebDriverWait wait = new WebDriverWait(driver, 1);
+		wait.until(ExpectedConditions.titleIs("Java Simple Login Web App"));
 		assertTrue(driver.getTitle().contains("Java Simple Login Web App"));
 	}
 
 	@Test
 	public void pageTitleContainsRegister() throws MalformedURLException {
-		WebElement element = driver.findElement(By.name("register"));
-		element.submit();
+		WebElement element = driver.findElement(By.id("register"));
+		element.click();
 		assertTrue(driver.getTitle().contains("Registration"));
 	}
 
+	@Test
+	public void pageTitleContainsRegisterbacktoLogin() throws MalformedURLException {
+		WebElement element = driver.findElement(By.id("register"));
+		element.click();
+		assertTrue(driver.getTitle().contains("Registration"));
+		driver.findElement(By.xpath("//input[@name='firstName']")).sendKeys("userfirstname");
+        driver.findElement(By.xpath("//input[@name='lastName']")).sendKeys("userlastname");
+		WebElement element1 = driver.findElement(By.id("login"));
+		element1.click();
+		assertTrue(driver.getTitle().contains("Java Simple Login Web App"));
+	}
 }

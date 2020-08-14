@@ -1,6 +1,6 @@
 # CT_Sample_Java
 
-Sample Jsp Login spring MVC java with mvn Selenium web tester
+Sample Jsp Login spring MVC java with mvn Selenium web tester Added with Selenium IDE automation testing on grid
 
 ### Prerequisites
 
@@ -18,10 +18,10 @@ mvn clean compile package verify -Dbrowsertype=firefox -Dapp.server.url=http://l
 
 Run on grid
 ```bash
-mvn clean compile package verify -Dgrid=true -Dgrid.server.url=http://<grid_ip>:4444/wd/hub -Dapp.server.url=http://localhost:10001/ZTL-sprint-selenium-test-1.0.0
+mvn clean compile package verify -Dbrowsertype=firefox -Dgrid=true -Dheadless=false -Dgrid.server.url=http://<grid_ip>:4444/wd/hub -Dapp.server.url=http://<hostip>:8080/ZTL-spring-selenium-test-1.0.0
 ```
 
-When hosted external change ```app.server.url ``` accordingly
+When hosted external change ```app.server.url ``` accordingly, identify hostip of the seleniumnode.
 
 ### Start Selenium Grid using Docker from docker_devops_stack project
 
