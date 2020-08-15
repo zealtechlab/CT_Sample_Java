@@ -44,14 +44,18 @@ pipeline {
             steps {
                 script {
                     sh 'mvn cargo:run &'
-                    sh "/opt/apache-jmeter-5.3/bin/jmeter -Jjmeter.save.saveservice.output_format=xml -n \
-                        -t 'perf/HTTP Request.jmx' -l target/perf/perfomancelog.jtl -j target/perf/jmeter.log"
+                    sh "/opt/apache-jmeter-5.3/bin/jmeter -Jjmeter.save.saveservice.output_format=xml \
+                        -Jjmeter.save.saveservice.response_data=true -Jjmeter.save.saveservice.samplerData=true \
+                        -Jjmeter.save.saveservice.requestHeaders=true -Jjmeter.save.saveservice.url=true \
+                        -Jjmeter.save.saveservice.responseHeaders=true \
+                        -n -t 'perf/HTTP Request.jmx' \
+                        -l target/perf/perfomancelog.jtl -j target/perf/jmeter.log"
                     sh 'mvn cargo:stop'
                 }
             }
             post {
                 always {
-                    perfReport filterRegex: '', sourceDataFiles: '**target/perf/*.jtl;**target/perf/*.log'
+                    perfReport filterRegex: '', sourceDataFiles: '**target/perf/*.jtl;**target/perf/*.xml'
                 }
             }
         }
