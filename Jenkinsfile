@@ -47,7 +47,7 @@ pipeline {
             }
             post {
                 success {
-                    perfReport filterRegex: '', sourceDataFiles: '**target/side/*.xml;**target/perf/*.jtl;**target/**/*.log'
+                    perfReport filterRegex: '', sourceDataFiles: 'target/side/*.xml;target/perf/*.jtl;target/**/*.log'
                 }
             }
         }
