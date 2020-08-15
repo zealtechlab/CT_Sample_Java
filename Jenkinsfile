@@ -53,27 +53,28 @@ pipeline {
             }
         }
     
-    post {
-        always {
-            echo 'JENKINS PIPELINE'
-        }
-        notBuilt {
-            echo 'JENKINS PIPELINE NOT BUILT'
-        }
-        success {
-            echo 'JENKINS PIPELINE SUCCESSFUL'
-        }
-        failure {
-            echo 'JENKINS PIPELINE FAILED'
-        }
-        unstable {
-            echo 'JENKINS PIPELINE WAS MARKED AS UNSTABLE'
-        }
-        changed {
-            echo 'JENKINS PIPELINE STATUS HAS CHANGED SINCE LAST EXECUTION'
-        }
-        aborted {
-            echo 'JENKINS PIPELINE ABORTED'
+        post {
+            always {
+                echo 'JENKINS PIPELINE'
+            }
+            notBuilt {
+                echo 'JENKINS PIPELINE NOT BUILT'
+            }
+            success {
+                echo 'JENKINS PIPELINE SUCCESSFUL'
+            }
+            failure {
+                echo 'JENKINS PIPELINE FAILED'
+            }
+            unstable {
+                echo 'JENKINS PIPELINE WAS MARKED AS UNSTABLE'
+            }
+            changed {
+                echo 'JENKINS PIPELINE STATUS HAS CHANGED SINCE LAST EXECUTION'
+            }
+            aborted {
+                echo 'JENKINS PIPELINE ABORTED'
+            }
         }
     }
 }
