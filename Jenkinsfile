@@ -34,20 +34,24 @@ pipeline {
                         --base-url http://172.27.0.1:8080/ZTL-spring-selenium-test-1.0.0"
                 }
             }
+            post {
+                always {
+                    perfReport filterRegex: '', sourceDataFiles: '**target/side/*.xml'
+                }
+            }
         }
         stage("Jmeter Perf Testing") {
             steps {
                 script {
                     sh 'mvn cargo:run &'
-                    sh 'sleep 30s'
                     sh "/opt/apache-jmeter-5.3/bin/jmeter -Jjmeter.save.saveservice.output_format=xml -n \
                         -t 'perf/HTTP Request.jmx' -l target/perf/perfomancelog.jtl -j target/perf/jmeter.log"
                     sh 'mvn cargo:stop'
                 }
             }
             post {
-                success {
-                    perfReport filterRegex: '', sourceDataFiles: 'target/side/*.xml;target/perf/*.jtl;target/**/*.log'
+                always {
+                    perfReport filterRegex: '', sourceDataFiles: '**target/perf/*.jtl;**target/perf/*.log'
                 }
             }
         }
