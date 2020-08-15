@@ -48,7 +48,7 @@ pipeline {
             post {
                 success {
                     echo 'Perf Stage SUCCESS'
-                    perfReport filterRegex: '', sourceDataFiles: 'target/'
+                    perfReport filterRegex: '', sourceDataFiles: ''
                 }
             }
         }
