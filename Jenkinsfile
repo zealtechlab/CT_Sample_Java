@@ -40,7 +40,7 @@ pipeline {
                 script {
                     sh 'mvn cargo:run &'
                     sh 'sleep 30s'
-                    sh "jmeter -Jjmeter.save.saveservice.output_format=xml -n \
+                    sh "/opt/apache-jmeter-5.3/bin/jmeter -Jjmeter.save.saveservice.output_format=xml -n \
                         -t 'perf/HTTP Request.jmx' -l target/perf/log.jtl -j target/jmeter.log"
                     sh 'mvn cargo:stop'
                 }
