@@ -133,7 +133,7 @@
                 <groupId>org.codehaus.cargo</groupId>
                 <artifactId>cargo-maven2-plugin</artifactId>
 				<version>1.7.16</version>
-				  <executions>
+				<executions>
 					<execution>
 						<id>start-container</id>
 						<phase>pre-integration-test</phase>
@@ -152,9 +152,10 @@
 				<configuration>
 					<container>
 					  <containerId>jetty9x</containerId>
-					  <type>embedded</type>
+					  <!-- <type>embedded</type> -->
 					</container>
                     <configuration>
+						<type>standalone</type>
                         <properties>
 							<cargo.servlet.port>10001</cargo.servlet.port>
 							<cargo.logging>high</cargo.logging>
