@@ -29,9 +29,14 @@ pipeline {
             steps {
                 script {
                     sh "selenium-side-runner -s http://seleniumhub:4444/wd/hub \
-                        SIDE/ZTL_Spring_Selemium_SIDE.side \
-                        -c 'browserName=firefox' \
+                        SIDE/ZTL_Spring_Selemium_SIDE.side -c 'browserName=firefox' \
+                        --output-directory=target/side --output-format=junit \
                         --base-url http://172.27.0.1:8080/ZTL-spring-selenium-test-1.0.0"
+                }
+            }
+            post {
+                success {
+                    perfReport filterRegex: '', sourceDataFiles: '**target/side/*.xml'
                 }
             }
         }
@@ -47,8 +52,7 @@ pipeline {
             }
             post {
                 success {
-                    echo 'Perf Stage SUCCESS'
-                    perfReport filterRegex: '', sourceDataFiles: '**target/perf/*.jtl;**target/perf/*.log,**target/perf/*.xml'
+                    perfReport filterRegex: '', sourceDataFiles: '**target/perf/*.jtl'
                 }
             }
         }
