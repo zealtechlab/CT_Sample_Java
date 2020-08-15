@@ -31,7 +31,7 @@ pipeline {
                     sh "selenium-side-runner -s http://seleniumhub:4444/wd/hub \
                         SIDE/ZTL_Spring_Selemium_SIDE.side \
                         -c 'browserName=firefox' \
-                        --base-url http://172.18.0.1:8080/ZTL-spring-selenium-test-1.0.0"
+                        --base-url http://172.27.0.1:8080/ZTL-spring-selenium-test-1.0.0"
                 }
             }
         }
