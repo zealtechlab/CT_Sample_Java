@@ -41,14 +41,14 @@ pipeline {
                     sh 'mvn cargo:run &'
                     sh 'sleep 30s'
                     sh "/opt/apache-jmeter-5.3/bin/jmeter -Jjmeter.save.saveservice.output_format=xml -n \
-                        -t 'perf/HTTP Request.jmx' -l target/perf/log.jtl -j target/jmeter.log"
+                        -t 'perf/HTTP Request.jmx' -l target/perf/log.jtl -j target/perf/jmeter.log"
                     sh 'mvn cargo:stop'
                 }
             }
             post {
                 success {
                     echo 'Perf Stage SUCCESS'
-                    perfReport filterRegex: '', sourceDataFiles: '**target/**/*.jtl;**target/**/*.log,**target/**/*.xml'
+                    perfReport filterRegex: '', sourceDataFiles: '**target/perf/*.jtl;**target/perf/*.log,**target/perf/*.xml'
                 }
             }
         }
